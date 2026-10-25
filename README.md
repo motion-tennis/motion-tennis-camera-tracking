@@ -2,6 +2,8 @@
 
 The camera and pose-estimation component of **Motion Tennis**, a doubles tennis demonstrator for four people in two fixed teams. The first implementation targets a webcam on the available **Windows laptop with an RTX 5080**. Its observations provide body-relative arm/racket gestures and player-identity evidence to the **Raspberry Pi 3 Model B**, which moves avatar roots automatically.
 
+**Start contributing:** read [repository orientation](docs/orientation.md), [staged workflow](docs/workflow.md) and [AGENTS.md](AGENTS.md), then check the canonical [project status](https://github.com/motion-tennis/documentation/blob/main/docs/project-status.md). Use the [shared task/handoff workflow](https://github.com/motion-tennis/documentation/blob/main/docs/contribution-workflow.md) to bound each human or AI contribution; future architecture sections do not authorize implementing the whole pipeline at once.
+
 ## Status and reference profile
 
 | Status | Meaning |
@@ -74,7 +76,12 @@ Follow the [integrated startup plan](https://github.com/motion-tennis/documentat
 
 ## Smoke test and validation
 
-**Planned smoke test:** capture one person's timestamped frames; confirm GPU inference and mapped image coordinates; publish the per-person packet plus frame status; pair a controller; verify Pi selection and historical IMU alignment. Repeat for four people, crossing/occlusion, distractors, stale frames and tracker restart. Verify body-relative gestures remain separate from virtual locomotion, stable team/slot identity and overhead-serve observations without triggered capture. Failure must disable hit eligibility and produce an explicit diagnostic outcome.
+The following acceptance coverage belongs to the named [workflow stages](docs/workflow.md), not to one task that builds the entire pipeline:
+
+- **S1, isolated slice:** use labeled file/synthetic fixtures to validate image-space joints, person/session identity, timestamp/quality semantics and bounded adapter output. A fixture pass is not camera or GPU evidence.
+- **S2, feasibility:** capture actual Windows webcam frames, verify the selected GPU provider/model and mapped coordinates, then exercise per-person publication plus frame status against explicit receivers/stubs. Measure four-person focus/FOV, identity, calibration and exposure timing, including crossing/occlusion, distractors, skipped/stale frames and restart cases.
+- **S3, real diagnostic path:** pair one real controller, verify Pi pose selection and historical IMU alignment with the accepted time maps/uncertainty, and follow the required ball-query/commit/feedback chain and explicit marker links. Invalid input must suppress hit eligibility and produce an explicit diagnostic outcome.
+- **S4, doubles:** verify four stable team/slot/person/controller bindings and body-relative racket/overhead-serve observations while Pi handles virtual locomotion. Camera capture remains continuous through gestures and markers. S5 owns the full matched load/fault/topology measurement campaign.
 
 No hardware, inference or networking smoke test is implemented or executed. Current local documentation check:
 
@@ -87,8 +94,11 @@ Run the shared documentation checker from the central repository as described in
 ## Repository layout and limitations
 
 ```text
-README.md  Component reference profile and implementation status
-LICENSE    Existing MIT license
+README.md            Component reference profile and implementation status
+AGENTS.md            Contributor instructions and scope boundaries
+docs/orientation.md  Role, reading order, actual evidence and checks
+docs/workflow.md     Local deliverables mapped to shared stage gates
+LICENSE              Existing MIT license
 ```
 
 There is no model artifact or runnable code. Room-scale camera focus, four-person identity stability, GPU compatibility, exposure timestamp uncertainty and calibrated plane accuracy must pass their gates before gameplay claims. Full 3D requires an independently verified depth/multi-view profile.
