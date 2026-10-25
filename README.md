@@ -1,13 +1,13 @@
 # Motion Tennis Camera Tracking
 
-The camera and pose-estimation component of **Motion Tennis**, a multiplayer tennis demonstrator for up to four players. The first implementation targets a webcam on the available **Windows laptop with an RTX 5080**. Its observations actively contribute to player/racket movement and physics decisions on the **Raspberry Pi 3 Model B**.
+The camera and pose-estimation component of **Motion Tennis**, a doubles tennis demonstrator for four people in two fixed teams. The first implementation targets a webcam on the available **Windows laptop with an RTX 5080**. Its observations provide body-relative arm/racket gestures and player-identity evidence to the **Raspberry Pi 3 Model B**, which moves avatar roots automatically.
 
 ## Status and reference profile
 
 | Status | Meaning |
 | --- | --- |
 | **Implemented** | Documentation and an MIT license only; no capture adapter, model integration, runtime configuration, executable or test suite exists |
-| **Agreed direction** | Webcam-first gameplay with four battery-powered wireless controllers; calibrated 2.5D first, a separately verified true-3D phase later |
+| **Agreed direction** | Webcam-first doubles with one controller/person/avatar per slot; stationary human gestures and automatic avatar locomotion; calibrated 2.5D first, a separately verified true-3D phase later |
 | **Proposed reference** | Native Windows Media Foundation capture, Python RTMO-m 640 × 640 via rtmlib/ONNX Runtime GPU, continuous temporal person tracking and compact pose publication |
 | **Open** | Exact webcam generation, verified GPU/runtime versions, model checksum/notices, calibrated confidence thresholds and actual four-person accuracy/latency |
 
@@ -27,7 +27,11 @@ Capture and inference stay on the laptop. The Pi receives observations, not raw 
 - Keep one waiting image; replace old waiting images and count skips instead of building capture backlog.
 - Expose timestamps, model/profile identity and loss counters to the shared debug environment.
 
-Physics owns controller/person association, calibrated plane mapping, historical IMU alignment, sensor fusion and hit calculation. A single RGB image is not measured metric wrist depth; do not label image-space joints as world-space metres. The tracker does not own ball state, decide hits or turn missing poses into ordinary misses. Controller transactions do not trigger new exposures.
+Physics owns controller/person association, calibrated body-relative gesture mapping, historical IMU alignment, sensor fusion, automatic avatar movement and match calculations. Publish wrist/arm and shoulder/torso reference observations so it can combine local racket motion with the virtual avatar root/heading. A physical wrist position is not the avatar's court position, and a single RGB image does not measure metric wrist depth. Keep published joints in the existing image-space representation. The tracker does not own match state, decide hits or turn missing poses into ordinary misses. Controller transactions do not trigger new exposures.
+
+The [agreed gameplay](https://github.com/motion-tennis/documentation/blob/main/docs/gameplay.md) keeps people in calibrated physical stations; these support visibility/separation and are not virtual lanes or team sides. Observe the assigned server's body-relative lift and subsequent overhead swing while physics owns toss/contact recognition. Both camera acquisition and every controller's 200 Hz stream remain continuous; the diagnostic marker cannot trigger an exposure or authorize a serve. The current schema/profile is unchanged, and a reviewed versioned match-state extension is required before the complete doubles game can be implemented.
+
+The [independent IMU threshold-marker overlay](https://github.com/motion-tennis/documentation/blob/main/docs/imu-trigger-markers.md) joins selected pose/frame identities to the existing controller transaction path. Preserve original capture timestamps and person/session IDs; continuous camera acquisition does not wait for a marker or take an extra triggered frame. A selected pose may predate the marker and remains input provenance, not marker-triggered work.
 
 ## Inputs, outputs, and connections
 
@@ -49,6 +53,12 @@ The candidate profile targets at least 30 pose updates/s for four people, prefer
 
 Candidate limits are pose age 80 ms, current IMU age 30 ms, historical pose/IMU alignment 25 ms, plane-position prediction 50 ms, per-network-clock uncertainty 2 ms and measured camera timestamp uncertainty 8 ms. Apply uncertainty conservatively; prediction does not change capture time. See [tracking and fusion inputs](https://github.com/motion-tennis/documentation/blob/main/docs/tracking.md) for exact meanings and [timing](https://github.com/motion-tennis/documentation/blob/main/docs/timing.md) for controller response/actuation targets. Continuous camera work is not wholly inside each application round trip.
 
+## Pi reference clock mapping
+
+The [agreed clock design](https://github.com/motion-tennis/documentation/blob/main/docs/coordinates-and-time.md#pi-reference-clock-mapping) maps native host time to Pi time with offset and drift correction, `T_pi = a * t_source + b`. Keep raw timestamps and clock/session identities; never step the host clock. Respond to Pi-coordinated `ClockExchange` over existing TCP control at complete-frame receipt and the declared response-send boundary. A verified common laptop domain and units may share a clock fit, but tracking, game and renderer each retain separate producer-session-bound mapping records/IDs. Distinct domains require separate fits.
+
+A camera/driver clock needs its own characterized conversion and exposure-boundary uncertainty: host arrival is not exposure time. Runtime pose selection and debug traces use the same Pi-owned mapping version, validity, uncertainty and source/reference epochs. Source restart invalidates its mapping; a Pi reference restart invalidates all live mappings. Unknown, expired or insufficiently accurate timing fails pose freshness/alignment gates without stopping continuous capture or controller sample/failure accounting; local RTT remains valid independently. This integration is not implemented and changes no gameplay payload or 200 Hz controller behavior.
+
 ## Setup and planned entry points
 
 The verified Git remote can be cloned with:
@@ -60,11 +70,11 @@ cd motion-tennis-camera-tracking
 
 This requires configured GitHub access. There is no service to build, configure or launch yet. Planned modules are the timestamp-preserving capture adapter, latest-frame shared buffer, RTMO inference worker, temporal identity tracker, packet publisher and trace adapter. Add real dependency locks, model checksums, source paths and launch commands with implementation. Do not download arbitrary GPU wheels or claim a version combination was tested from the existence of this README.
 
-Follow the [integrated startup plan](https://github.com/motion-tennis/documentation/blob/main/docs/development.md). Pair one controller/person at a time in marked lanes and require explicit confirmation. Revalidate identity after loss; do not bind controllers according to detection order or proximity alone.
+Follow the [integrated startup plan](https://github.com/motion-tennis/documentation/blob/main/docs/development.md) and [assignment contract](https://github.com/motion-tennis/documentation/blob/main/docs/player-assignment.md). The proposed slots are `1=A1`, `2=A2`, `3=B1`, `4=B2`. Identify one controller/person at a time through guided motion at a physical station, require explicit operator confirmation, and complete the versioned Association acknowledgement/resume barrier. Revalidate identity after loss or restart; detection order, proximity and camera side never assign a team. Normal doubles requires all four slots ready; one-to-three-player runs are integration tests without implicit AI fill. End changes and front/back roles preserve each player/controller/avatar/team identity.
 
 ## Smoke test and validation
 
-**Planned smoke test:** capture one person's timestamped frames; confirm GPU inference and mapped image coordinates; publish the per-person packet plus frame status; pair a controller; verify Pi selection and historical IMU alignment. Repeat for four people, crossing/occlusion, distractors, stale frames and tracker restart. Failure must disable hit eligibility and produce an explicit diagnostic outcome.
+**Planned smoke test:** capture one person's timestamped frames; confirm GPU inference and mapped image coordinates; publish the per-person packet plus frame status; pair a controller; verify Pi selection and historical IMU alignment. Repeat for four people, crossing/occlusion, distractors, stale frames and tracker restart. Verify body-relative gestures remain separate from virtual locomotion, stable team/slot identity and overhead-serve observations without triggered capture. Failure must disable hit eligibility and produce an explicit diagnostic outcome.
 
 No hardware, inference or networking smoke test is implemented or executed. Current local documentation check:
 
