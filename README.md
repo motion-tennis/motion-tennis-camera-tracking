@@ -4,6 +4,8 @@ The camera and pose-estimation component of **Motion Tennis**, a doubles tennis 
 
 **Start contributing:** read [repository orientation](docs/orientation.md), [staged workflow](docs/workflow.md) and [AGENTS.md](AGENTS.md), then check the canonical [project status](https://github.com/motion-tennis/documentation/blob/main/docs/project-status.md). Use the [shared task/handoff workflow](https://github.com/motion-tennis/documentation/blob/main/docs/contribution-workflow.md) to bound each human or AI contribution; future architecture sections do not authorize implementing the whole pipeline at once.
 
+The [S0 contract review and first S1 handoff](docs/s0-contract-review.md) record this component's producer/consumer expectations, required fixtures and remaining evidence.
+
 ## Status and reference profile
 
 | Status | Meaning |
@@ -31,13 +33,13 @@ Capture and inference stay on the laptop. The Pi receives observations, not raw 
 
 Physics owns controller/person association, calibrated body-relative gesture mapping, historical IMU alignment, sensor fusion, automatic avatar movement and match calculations. Publish wrist/arm and shoulder/torso reference observations so it can combine local racket motion with the virtual avatar root/heading. A physical wrist position is not the avatar's court position, and a single RGB image does not measure metric wrist depth. Keep published joints in the existing image-space representation. The tracker does not own match state, decide hits or turn missing poses into ordinary misses. Controller transactions do not trigger new exposures.
 
-The [agreed gameplay](https://github.com/motion-tennis/documentation/blob/main/docs/gameplay.md) keeps people in calibrated physical stations; these support visibility/separation and are not virtual lanes or team sides. Observe the assigned server's body-relative lift and subsequent overhead swing while physics owns toss/contact recognition. Both camera acquisition and every controller's 200 Hz stream remain continuous; the diagnostic marker cannot trigger an exposure or authorize a serve. The current schema/profile is unchanged, and a reviewed versioned match-state extension is required before the complete doubles game can be implemented.
+The [agreed gameplay](https://github.com/motion-tennis/documentation/blob/main/docs/gameplay.md) keeps people in calibrated physical stations; these support visibility/separation and are not virtual lanes or team sides. Observe the assigned server's body-relative lift and subsequent overhead swing while physics owns toss/contact recognition. Both camera acquisition and every controller's 200 Hz stream remain continuous; the diagnostic marker cannot trigger an exposure or authorize a serve. The proposed v0.3 match-state extension retains these observation semantics and continuous streams; the [S0 baseline](https://github.com/motion-tennis/documentation/blob/main/docs/s0-baseline.md) records its fixtures and implementation gates.
 
 The [independent IMU threshold-marker overlay](https://github.com/motion-tennis/documentation/blob/main/docs/imu-trigger-markers.md) joins selected pose/frame identities to the existing controller transaction path. Preserve original capture timestamps and person/session IDs; continuous camera acquisition does not wait for a marker or take an extra triggered frame. A selected pose may predate the marker and remains input provenance, not marker-triggered work.
 
 ## Inputs, outputs, and connections
 
-Interfaces below are **proposed**, following the central [`0.2-proposed` protocol](https://github.com/motion-tennis/documentation/blob/main/docs/protocol.md).
+Interfaces below are **proposed**, following the central [`0.3-proposed` protocol](https://github.com/motion-tennis/documentation/blob/main/docs/protocol.md).
 
 | Direction | Interface | Component |
 | --- | --- | --- |

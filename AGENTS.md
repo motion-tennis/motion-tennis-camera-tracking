@@ -20,7 +20,7 @@ S0 can include explicitly tasked small contract-validation tools and generated-c
 - Keep image-space pose semantics, one rectification step, 17-joint identity/quality and explicit missing data consistent with the shared contract. Do not invent metric wrist depth or treat host arrival as camera exposure.
 - Pi physics owns confirmed controller/person associations, body-local gesture fusion, avatar movement, hits, serving and scoring. Tracking supplies observations; discovery order/proximity cannot assign teams, tracking loss is not a miss, and the renderer cannot repair invalid collision evidence.
 - Preserve native clocks and the Pi-owned mapping/reference epochs. A common verified host-clock fit does not permit reuse of another producer's session-bound map ID. Unknown timing fails applicable freshness gates honestly.
-- Coordinate shared schema/profile changes; do not silently alter rates, coordinates, quality semantics or payload limits. The current ball-only schema does not already encode the full doubles match.
+- Coordinate shared schema/profile changes; do not silently alter rates, coordinates, quality semantics or payload limits. The proposed v0.3 full-match schema keeps tracking observations separate from match ownership; use its pinned profile and fixtures without claiming runtime interoperability.
 
 ## Validate and hand off
 
