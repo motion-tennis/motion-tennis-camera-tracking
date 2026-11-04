@@ -2,6 +2,17 @@
 
 These instructions apply to this repository and to both human and AI contributors. Future architecture documents describe a destination, not authorization to build every stage at once.
 
+## Git branch and remote workflow
+
+Follow the [shared Git workflow](https://github.com/motion-tennis/documentation/blob/main/docs/contribution-workflow.md#git-branch-and-remote-workflow) for every task.
+
+- Before any file edit, verify the repository, current branch and working-tree status. Work on a dedicated branch for this task, never on `main`, detached HEAD or another task's branch. Preserve existing work; use a separate worktree when needed rather than resetting, discarding or automatically stashing it.
+- Fetch before starting and create new task branches from the freshly fetched `origin/main` with `--no-track`; verify the remote/default branch first. If fetching fails, record the failure and known base revision before continuing local work on a task branch. Remote freshness remains unverified, and pushing must wait for a successful fetch and synchronization.
+- Before every authorized push, run `git fetch --prune origin`, review changes to `origin/main` since the previous synchronization, and integrate the latest main and any new commits on the remote task branch into the task branch.
+- Prefer merges to preserve published history. Resolve conflicts while preserving both contributors' intent; ask only when the intended resolution is ambiguous. Rerun relevant checks after integration and require `origin/main` and the existing remote task branch to be ancestors of `HEAD` before pushing.
+- Push explicitly to the intended remote task branch. If the remote advances or rejects a push, fetch, integrate, resolve conflicts and revalidate before retrying. Do not force-push, rewrite shared history or push directly to `main` without explicit authorization for that action.
+- Branch preparation and synchronization do not authorize committing or publishing. Honor existing user authorization without asking for it again; otherwise leave the reviewed changes local and report the branch, checks and any synchronization limits.
+
 ## Establish the task boundary
 
 1. Read [orientation](docs/orientation.md), [local workflow](docs/workflow.md), the canonical [project status](https://github.com/motion-tennis/documentation/blob/main/docs/project-status.md), and the shared [contribution workflow/task template](https://github.com/motion-tennis/documentation/blob/main/docs/contribution-workflow.md).
