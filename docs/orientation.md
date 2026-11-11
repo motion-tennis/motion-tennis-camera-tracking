@@ -6,7 +6,7 @@
 
 This repository supplies continuous camera observations and temporal person identity for Motion Tennis. Webcam capture/inference runs on the Windows laptop; the Pi receives compact pose observations for body-local arm/racket gestures. Human participants remain at calibrated physical stations while Pi physics moves the virtual avatars.
 
-**Implemented here:** README, contributor/orientation/workflow documents and MIT license. No capture adapter, model artifact, inference worker, publisher, executable, dependency lock or local test suite exists. Native Media Foundation capture with Python RTMO-m/rtmlib/ONNX Runtime GPU is a **proposed** implementation. Camera generation, actual GPU provider compatibility, four-person quality and latency still require evidence. The adjacent offline debug checker is not proof of a tracking runtime.
+**Implemented here:** a dependency-free S1 recorded/synthetic pose adapter, one waiting frame, bounded diagnostics, replay CLI, pinned fixtures and 47 host tests. The [S1 handoff](s1-recorded-pose-adapter.md) records the source format, generated Python codec checks and limits. No live capture, model artifact, inference worker or network publisher exists. Native Media Foundation capture with Python RTMO-m/rtmlib/ONNX Runtime GPU remains a **proposed** implementation. Camera generation, actual GPU provider compatibility, four-person quality and latency still require evidence.
 
 Read the central [project status](https://github.com/motion-tennis/documentation/blob/main/docs/project-status.md) for the current global stage. The [shared gates](https://github.com/motion-tennis/documentation/blob/main/docs/project-stages.md) and [local workflow](workflow.md) describe staged work; they do not authorize every future feature. Keep the active-stage decision in the canonical record rather than duplicating it here.
 
@@ -33,9 +33,11 @@ Windows game storage owns the committed match snapshot after Pi calculation and 
 
 ## Available checks
 
-The existing repository-local check for tracked changes is:
+From this checkout, Python 3.10+ runs the offline suite and replay without external packages:
 
 ```sh
+python -B -m unittest discover -s tests -v
+python -B -m tracking_adapter examples/recorded-poses.jsonl --manifest examples/recorded-pose-manifest.json
 git diff --check
 ```
 
@@ -45,7 +47,7 @@ Inspect new untracked Markdown separately for trailing whitespace and final newl
 python3 scripts/check_docs.py
 ```
 
-It checks available sibling documentation; it does not test webcam capture, model licenses/artifacts, GPU execution, tracking accuracy or timing. Missing sibling checkouts are not verified remote content. No model installation, runtime launch or tracking-test command exists here yet; add such commands only with the corresponding authorized implementation.
+It checks available sibling documentation; it does not test webcam capture, model licenses/artifacts, GPU execution, tracking accuracy or timing. Missing sibling checkouts are not verified remote content. The separate [generated-codec development check](s1-recorded-pose-adapter.md#shared-codec-check) needs the pinned optional Python packages; it is not a live tracking runtime.
 
 ## Small S0 tasks to propose
 

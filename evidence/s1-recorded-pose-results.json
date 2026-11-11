@@ -1,0 +1,270 @@
+{
+  "date": "2026-11-11",
+  "delivery": {
+    "authorization": "Project user explicitly authorized committing and pushing the tracking slice and related documentation on 2026-11-11.",
+    "authorized_target": "origin/main",
+    "branch": "task/s1-recorded-pose-adapter",
+    "documentation_base": "e541fd2c6a089a1fea90cc412cc2dae3d90255f5",
+    "publication_evidence": "The containing Git commit and remote refs establish delivery independently of this validation report.",
+    "tracking_base": "a7ae1bd53ad9b3396c997a13c8b84cdbda10309d"
+  },
+  "environment": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.14.3"
+  },
+  "generated_python_codec": {
+    "cases": [
+      {
+        "case": "example_line_1",
+        "envelopes": [
+          {
+            "body": "skeleton_frame",
+            "encoded_bytes": 443
+          },
+          {
+            "body": "skeleton_frame",
+            "encoded_bytes": 443
+          },
+          {
+            "body": "skeleton_frame",
+            "encoded_bytes": 443
+          },
+          {
+            "body": "skeleton_frame",
+            "encoded_bytes": 443
+          },
+          {
+            "body": "frame_status",
+            "encoded_bytes": 62
+          }
+        ]
+      },
+      {
+        "case": "example_line_2",
+        "envelopes": [
+          {
+            "body": "skeleton_frame",
+            "encoded_bytes": 443
+          },
+          {
+            "body": "frame_status",
+            "encoded_bytes": 59
+          }
+        ]
+      },
+      {
+        "case": "example_line_3",
+        "envelopes": [
+          {
+            "body": "frame_status",
+            "encoded_bytes": 58
+          }
+        ]
+      },
+      {
+        "case": "maximum_adapter_values",
+        "envelopes": [
+          {
+            "body": "skeleton_frame",
+            "encoded_bytes": 490
+          },
+          {
+            "body": "skeleton_frame",
+            "encoded_bytes": 490
+          },
+          {
+            "body": "skeleton_frame",
+            "encoded_bytes": 490
+          },
+          {
+            "body": "skeleton_frame",
+            "encoded_bytes": 490
+          },
+          {
+            "body": "frame_status",
+            "encoded_bytes": 106
+          }
+        ]
+      },
+      {
+        "case": "maximum_message_sequence_width",
+        "envelopes": [
+          {
+            "body": "skeleton_frame",
+            "encoded_bytes": 497
+          },
+          {
+            "body": "skeleton_frame",
+            "encoded_bytes": 497
+          },
+          {
+            "body": "skeleton_frame",
+            "encoded_bytes": 497
+          },
+          {
+            "body": "skeleton_frame",
+            "encoded_bytes": 497
+          },
+          {
+            "body": "frame_status",
+            "encoded_bytes": 113
+          }
+        ]
+      },
+      {
+        "case": "shared_seventeen_joint_pose",
+        "envelopes": [
+          {
+            "body": "skeleton_frame",
+            "encoded_bytes": 439
+          },
+          {
+            "body": "frame_status",
+            "encoded_bytes": 58
+          }
+        ]
+      }
+    ],
+    "checked_envelopes": 20,
+    "development_dependencies": {
+      "grpcio": "1.85.0",
+      "grpcio-tools": "1.78.0",
+      "protobuf": "6.33.5",
+      "setuptools": "84.2.1",
+      "typing_extensions": "4.16.0"
+    },
+    "example_frames": 3,
+    "largest_encoded_envelope_bytes": 497,
+    "limitations": "Python host codec only; no nanopb C/device interoperability, network, capture or hardware validation.",
+    "profile_sha256": "a3533462fdebfd4c7c2f87eaa3bd579d3056170e3dcfc6a6c68ed34474c1d969",
+    "schema_sha256": "b6728e240316e957f5c5addb973f12f9a57fffbcdacc4331f3db5e06895f360b",
+    "scope": "S1 offline generated Python codec compatibility",
+    "shared_pose_body_sha256": "68c6e98b41dcf94f8064c22cb09a7108635b470ad4d52c5beba738bf619faa1d",
+    "status": "passed",
+    "udp_cap_bytes_including_envelope": 1200
+  },
+  "limits": [
+    "Synthetic fixtures and declared offline timing only.",
+    "No sensor access, inference, Pi mapping, target C codec, network or hardware validation.",
+    "Debug/Pi adoption and shared S1 acceptance remain open."
+  ],
+  "replays": {
+    "every_frame": {
+      "deterministic_repeat": true,
+      "emitted_frames": 3,
+      "exit_code": 0,
+      "stats": {
+        "accepted": 3,
+        "diagnostics_dropped": 0,
+        "emitted": 3,
+        "expired": 0,
+        "frame_sequence_gaps": 1,
+        "received": 3,
+        "rejected": 0,
+        "replaced": 0,
+        "session_flushes": 0,
+        "session_restarts": 0,
+        "source_frames_dropped_total": 1,
+        "suppressed": 0
+      },
+      "stdout_sha256": "f91dcd30e3ea94afbb86f59e74dfb8bae3836277b9d47be7babbd5439dfcb140",
+      "valid": true
+    },
+    "latest_only": {
+      "deterministic_repeat": true,
+      "emitted_frames": 2,
+      "exit_code": 0,
+      "stats": {
+        "accepted": 3,
+        "diagnostics_dropped": 0,
+        "emitted": 2,
+        "expired": 0,
+        "frame_sequence_gaps": 1,
+        "received": 3,
+        "rejected": 0,
+        "replaced": 1,
+        "session_flushes": 0,
+        "session_restarts": 0,
+        "source_frames_dropped_total": 1,
+        "suppressed": 0
+      },
+      "stdout_sha256": "11002ce63b6c0a9aff7607745e0a287dfc936adee88f8102c35e9bc4417d8130",
+      "valid": true
+    }
+  },
+  "scope": "Recorded/synthetic tracking input only",
+  "source_sha256_lf": {
+    ".gitattributes": "8e41095bad402528e813d6242cfea092c9e84922b0f0d30aab34f6116cad0bc4",
+    "examples/fixture-hashes.json": "ce457a9149954124d86b619bb8d0164be55eab65d9a66bd00b3c206fdea653dc",
+    "examples/recorded-pose-manifest.json": "b3501f06c626840938948ea4fcb402930cd037354532235bab0e76780119c806",
+    "examples/recorded-poses.jsonl": "375432756521286d21b93865c17f59b6adfb7571d59d1224944d9bc817ac25aa",
+    "requirements-codec.txt": "d75cf2e1f33db8981401f4249d25c271fb824104227ecf017056151321cf26ff",
+    "scripts/check_shared_contract.py": "9235b13a3b6c06d84a00d35e0c951ebd6ca9bd24debe2ad5979ef5662cebbaa3",
+    "tests/fixtures.py": "a39ec71a5fc341ca5cc8d98d68c5440b5958032d2e65c361a08bdcdf6514cca6",
+    "tests/test_recorded_pose_adapter.py": "2ee1e34fb31ed1af54d4a365657ab148f254859d6db38b6a97351aee700e2bcd",
+    "tests/test_replay_cli.py": "857bfd1d3d5692a74d9f18c6ca1c7fd039489cb10c27084659b00acbbba85438",
+    "tracking_adapter/__init__.py": "2203efccc8e8d949058ca402438f91fd298dcb5d7c88b67d950228439d8b6dc2",
+    "tracking_adapter/__main__.py": "c5f72403a9a1cb762568c6243ab9033c43eb7b2d981e04124e8c9fd37d54523c",
+    "tracking_adapter/adapter.py": "87e445e7d78342f2bca96db4fa481c58c23d8a888bf49534e6b32a6f9b9a4534"
+  },
+  "stage": "S1",
+  "status": "passed_offline_tracking_checks",
+  "unit_tests": {
+    "exit_code": 0,
+    "output": [
+      "test_manifest_pins_synthetic_coordinate_and_contract_inputs (test_recorded_pose_adapter.FixtureAndManifestTests.test_manifest_pins_synthetic_coordinate_and_contract_inputs) ... ok",
+      "test_recorded_input_declaration_is_preserved_without_relabeling (test_recorded_pose_adapter.FixtureAndManifestTests.test_recorded_input_declaration_is_preserved_without_relabeling) ... ok",
+      "test_required_manifest_provenance_cannot_be_omitted (test_recorded_pose_adapter.FixtureAndManifestTests.test_required_manifest_provenance_cannot_be_omitted) ... ok",
+      "test_saved_fixture_hashes_match_exact_bytes (test_recorded_pose_adapter.FixtureAndManifestTests.test_saved_fixture_hashes_match_exact_bytes) ... ok",
+      "test_unverified_or_incompatible_manifest_is_rejected (test_recorded_pose_adapter.FixtureAndManifestTests.test_unverified_or_incompatible_manifest_is_rejected) ... ok",
+      "test_bounded_session_history_refuses_new_sessions_without_forgetting_old_ids (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_bounded_session_history_refuses_new_sessions_without_forgetting_old_ids) ... ok",
+      "test_calibration_revision_mismatch_is_explicit (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_calibration_revision_mismatch_is_explicit) ... ok",
+      "test_caller_mutation_cannot_change_validated_pending_observations (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_caller_mutation_cannot_change_validated_pending_observations) ... ok",
+      "test_capture_age_and_uncertainty_boundary_is_inclusive (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_capture_age_and_uncertainty_boundary_is_inclusive) ... ok",
+      "test_capture_arrival_completion_and_now_keep_their_boundary_order (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_capture_arrival_completion_and_now_keep_their_boundary_order) ... ok",
+      "test_capture_uncertainty_is_bounded_and_not_implicitly_zero (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_capture_uncertainty_is_bounded_and_not_implicitly_zero) ... ok",
+      "test_diagnostics_are_bounded_and_drain_without_resetting_accounting (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_diagnostics_are_bounded_and_drain_without_resetting_accounting) ... ok",
+      "test_diagnostics_preserve_source_boundaries_and_remain_strict_json (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_diagnostics_preserve_source_boundaries_and_remain_strict_json) ... ok",
+      "test_duplicate_people_and_extra_people_are_rejected (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_duplicate_people_and_extra_people_are_rejected) ... ok",
+      "test_empty_frame_emits_status_without_inventing_people (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_empty_frame_emits_status_without_inventing_people) ... ok",
+      "test_explicit_session_restart_flushes_pending_and_scopes_reused_person_ids (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_explicit_session_restart_flushes_pending_and_scopes_reused_person_ids) ... ok",
+      "test_explicit_unavailable_joint_retains_supplied_coordinates (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_explicit_unavailable_joint_retains_supplied_coordinates) ... ok",
+      "test_fixture_replay_is_deterministic_with_caller_times (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_fixture_replay_is_deterministic_with_caller_times) ... ok",
+      "test_four_people_share_one_frame_and_keep_all_joint_values (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_four_people_share_one_frame_and_keep_all_joint_values) ... ok",
+      "test_frame_and_timestamp_counters_obey_pinned_wire_range (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_frame_and_timestamp_counters_obey_pinned_wire_range) ... ok",
+      "test_invalid_confidence_never_becomes_a_usable_joint (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_invalid_confidence_never_becomes_a_usable_joint) ... ok",
+      "test_invalid_new_frame_cannot_poison_the_latest_valid_slot (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_invalid_new_frame_cannot_poison_the_latest_valid_slot) ... ok",
+      "test_invalid_or_same_session_restart_preserves_pending_work (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_invalid_or_same_session_restart_preserves_pending_work) ... ok",
+      "test_invalid_take_time_keeps_the_valid_pending_frame (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_invalid_take_time_keeps_the_valid_pending_frame) ... ok",
+      "test_late_take_expires_pending_frame_and_retains_drop_evidence (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_late_take_expires_pending_frame_and_retains_drop_evidence) ... ok",
+      "test_malformed_json_shapes_fail_without_leaking_type_errors (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_malformed_json_shapes_fail_without_leaking_type_errors) ... ok",
+      "test_missing_duplicate_and_out_of_range_joint_indices_are_rejected (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_missing_duplicate_and_out_of_range_joint_indices_are_rejected) ... ok",
+      "test_nonfinite_out_of_range_and_non_numeric_coordinates_are_rejected (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_nonfinite_out_of_range_and_non_numeric_coordinates_are_rejected) ... ok",
+      "test_observation_clock_regression_cannot_emit_backwards_timestamps (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_observation_clock_regression_cannot_emit_backwards_timestamps) ... ok",
+      "test_offer_does_not_implicitly_adopt_a_new_tracker_session (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_offer_does_not_implicitly_adopt_a_new_tracker_session) ... ok",
+      "test_offline_envelopes_keep_sender_and_run_byte_identity (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_offline_envelopes_keep_sender_and_run_byte_identity) ... ok",
+      "test_one_slot_replaces_whole_frames_and_reports_drops_separately (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_one_slot_replaces_whole_frames_and_reports_drops_separately) ... ok",
+      "test_origin_coordinate_is_a_valid_measurement_not_a_missing_joint (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_origin_coordinate_is_a_valid_measurement_not_a_missing_joint) ... ok",
+      "test_person_identity_must_be_positive_and_uint32_bounded (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_person_identity_must_be_positive_and_uint32_bounded) ... ok",
+      "test_recent_arrival_does_not_hide_stale_capture (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_recent_arrival_does_not_hide_stale_capture) ... ok",
+      "test_regressing_source_loss_counter_is_rejected_without_overwriting_pending (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_regressing_source_loss_counter_is_rejected_without_overwriting_pending) ... ok",
+      "test_repeated_or_older_frame_id_is_rejected_after_consumption (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_repeated_or_older_frame_id_is_rejected_after_consumption) ... ok",
+      "test_retired_session_identity_cannot_be_reused_after_another_restart (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_retired_session_identity_cannot_be_reused_after_another_restart) ... ok",
+      "test_unavailable_state_still_requires_explicit_bounded_joint_values (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_unavailable_state_still_requires_explicit_bounded_joint_values) ... ok",
+      "test_unknown_timing_and_other_clock_are_not_replaced_by_arrival (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_unknown_timing_and_other_clock_are_not_replaced_by_arrival) ... ok",
+      "test_unknown_tracking_states_are_rejected (test_recorded_pose_adapter.RecordedPoseAcceptanceTests.test_unknown_tracking_states_are_rejected) ... ok",
+      "test_buffered_replay_reports_whole_frame_replacements (test_replay_cli.ReplayCliTests.test_buffered_replay_reports_whole_frame_replacements) ... ok",
+      "test_duplicate_json_keys_and_nonfinite_numbers_are_input_errors (test_replay_cli.ReplayCliTests.test_duplicate_json_keys_and_nonfinite_numbers_are_input_errors) ... ok",
+      "test_empty_or_blank_only_run_is_not_successful_evidence (test_replay_cli.ReplayCliTests.test_empty_or_blank_only_run_is_not_successful_evidence) ... ok",
+      "test_oversized_record_is_rejected_before_semantic_processing (test_replay_cli.ReplayCliTests.test_oversized_record_is_rejected_before_semantic_processing) ... ok",
+      "test_replay_reads_all_records_and_emits_a_valid_summary (test_replay_cli.ReplayCliTests.test_replay_reads_all_records_and_emits_a_valid_summary) ... ok",
+      "test_semantic_failure_is_accounted_in_summary_and_returns_one (test_replay_cli.ReplayCliTests.test_semantic_failure_is_accounted_in_summary_and_returns_one) ... ok",
+      "",
+      "----------------------------------------------------------------------",
+      "Ran 47 tests in 1.020s",
+      "",
+      "OK"
+    ],
+    "tests": 47
+  }
+}

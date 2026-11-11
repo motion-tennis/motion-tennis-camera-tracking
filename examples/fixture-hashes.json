@@ -1,0 +1,8 @@
+{
+  "format": "motion-tennis-tracking-fixture-hashes-v1",
+  "synthetic": true,
+  "files": {
+    "recorded-pose-manifest.json": "b3501f06c626840938948ea4fcb402930cd037354532235bab0e76780119c806",
+    "recorded-poses.jsonl": "375432756521286d21b93865c17f59b6adfb7571d59d1224944d9bc817ac25aa"
+  }
+}

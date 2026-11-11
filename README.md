@@ -10,18 +10,20 @@ The [S0 contract review and first S1 handoff](docs/s0-contract-review.md) record
 
 | Status | Meaning |
 | --- | --- |
-| **Implemented** | Documentation and an MIT license only; no capture adapter, model integration, runtime configuration, executable or test suite exists |
+| **Implemented** | S1 recorded/synthetic pose adapter, one-slot frame handoff, bounded diagnostics, replay CLI and 47 host tests; generated Python codec checks cover the accepted v0.3 boundary |
 | **Agreed direction** | Webcam-first doubles with one controller/person/avatar per slot; stationary human gestures and automatic avatar locomotion; calibrated 2.5D first, a separately verified true-3D phase later |
 | **Proposed reference** | Native Windows Media Foundation capture, Python RTMO-m 640 × 640 via rtmlib/ONNX Runtime GPU, continuous temporal person tracking and compact pose publication |
 | **Open** | Exact webcam generation, verified GPU/runtime versions, model checksum/notices, calibrated confidence thresholds and actual four-person accuracy/latency |
 
 See the [master plan](https://github.com/motion-tennis/documentation/blob/main/docs/master-plan.md) and [tracking-stack specification](https://github.com/motion-tennis/documentation/blob/main/docs/tracking-stack.md). The webcam-first profile replaces the earlier Kinect-first prerequisite. Kinect v2 is an optional later depth adapter requiring its own verified skeleton backend.
 
+The user reported a working Xbox Kinect available for future development on 2026-11-11. The adjacent local `testenv` targets Kinect v2/Xbox One and records historical RGB/depth/IR tests; those records did not establish detected-person tracking. Identify the actual unit, SDK, joint conversion, calibration and timestamp behavior before implementing that separate adapter. The current S1 inputs are labeled synthetic and use the existing image-space contract.
+
 ## Hardware and prerequisites
 
 The user is considering an Elgato Facecam or an alternative; the generation is not confirmed. Desired capture is 1920 × 1080 at 60 frames/s. Facecam/MK.2 desk-focus limits must be checked against four-player room distances. Facecam 4K in its 1080p mode is a candidate with a broader published focus range, but no camera is approved by measurement yet. The [hardware guide](https://github.com/motion-tennis/documentation/blob/main/docs/hardware.md) and [camera selection evidence](https://github.com/motion-tennis/documentation/blob/main/docs/tracking-stack.md#camera-selection-and-commissioning) define the gate.
 
-Capture and inference stay on the laptop. The Pi receives observations, not raw video. Verify the actual Windows build, GPU/driver, USB topology, runtime execution provider and model compatibility; an RTX 5080 label does not establish latency or prevent CPU fallback. Git and a Markdown viewer are sufficient for current documentation work. Python/ONNX/CUDA dependencies are planned, with no tested installation command yet.
+Capture and inference stay on the laptop. The Pi receives observations, not raw video. Verify the actual Windows build, GPU/driver, USB topology, runtime execution provider and model compatibility; an RTX 5080 label does not establish latency or prevent CPU fallback. The S1 adapter requires Python 3.10+ and the standard library. GPU, ONNX and camera dependencies remain unselected for the live implementation.
 
 ## Responsibilities and boundaries
 
@@ -72,7 +74,17 @@ git clone git@github.com:motion-tennis/motion-tennis-camera-tracking.git
 cd motion-tennis-camera-tracking
 ```
 
-This requires configured GitHub access. There is no service to build, configure or launch yet. Planned modules are the timestamp-preserving capture adapter, latest-frame shared buffer, RTMO inference worker, temporal identity tracker, packet publisher and trace adapter. Add real dependency locks, model checksums, source paths and launch commands with implementation. Do not download arbitrary GPU wheels or claim a version combination was tested from the existence of this README.
+This requires configured GitHub access. Run the isolated S1 replay and tests from this checkout:
+
+```sh
+python -B -m tracking_adapter examples/recorded-poses.jsonl --manifest examples/recorded-pose-manifest.json
+python -B -m tracking_adapter examples/recorded-poses.jsonl --manifest examples/recorded-pose-manifest.json --consume-every 2
+python -B -m unittest discover -s tests -v
+```
+
+The first command emits three normalized frames and a summary; the second exercises replacement of waiting frames. Output contains per-person `skeleton_frame`, common `frame_status`, standard Protobuf-JSON envelopes, original timing/provenance and separate loss counters. The CLI opens no camera or network socket. See the [S1 format, checks and handoff](docs/s1-recorded-pose-adapter.md) for conventions and optional generated-codec validation.
+
+Live capture, RTMO inference, temporal re-identification and packet publishing remain future modules. Pin their actual dependencies, model checksums and device evidence alongside their implementation.
 
 Follow the [integrated startup plan](https://github.com/motion-tennis/documentation/blob/main/docs/development.md) and [assignment contract](https://github.com/motion-tennis/documentation/blob/main/docs/player-assignment.md). The proposed slots are `1=A1`, `2=A2`, `3=B1`, `4=B2`. Identify one controller/person at a time through guided motion at a physical station, require explicit operator confirmation, and complete the versioned Association acknowledgement/resume barrier. Revalidate identity after loss or restart; detection order, proximity and camera side never assign a team. Normal doubles requires all four slots ready; one-to-three-player runs are integration tests without implicit AI fill. End changes and front/back roles preserve each player/controller/avatar/team identity.
 
@@ -85,7 +97,7 @@ The following acceptance coverage belongs to the named [workflow stages](docs/wo
 - **S3, real diagnostic path:** pair one real controller, verify Pi pose selection and historical IMU alignment with the accepted time maps/uncertainty, and follow the required ball-query/commit/feedback chain and explicit marker links. Invalid input must suppress hit eligibility and produce an explicit diagnostic outcome.
 - **S4, doubles:** verify four stable team/slot/person/controller bindings and body-relative racket/overhead-serve observations while Pi handles virtual locomotion. Camera capture remains continuous through gestures and markers. S5 owns the full matched load/fault/topology measurement campaign.
 
-No hardware, inference or networking smoke test is implemented or executed. Current local documentation check:
+The S1 suite covers deterministic observations, invalid joints/quality/identities, stale/unknown timing, session restarts, latest-only replacement and bounded file/diagnostic handling. No hardware, inference or networking smoke test is implemented or executed. Local whitespace check:
 
 ```sh
 git diff --check
@@ -100,10 +112,16 @@ README.md            Component reference profile and implementation status
 AGENTS.md            Contributor instructions and scope boundaries
 docs/orientation.md  Role, reading order, actual evidence and checks
 docs/workflow.md     Local deliverables mapped to shared stage gates
+docs/s1-recorded-pose-adapter.md  Offline format, evidence and next boundary
+tracking_adapter/    Dependency-free validator, latest-frame slot and replay CLI
+examples/            Pinned synthetic manifest, frames and fixture hashes
+tests/               API and file/CLI acceptance tests
+scripts/check_shared_contract.py  Optional generated Python codec checks
+requirements-codec.txt  Pinned development-only codec dependencies
 LICENSE              Existing MIT license
 ```
 
-There is no model artifact or runnable code. Room-scale camera focus, four-person identity stability, GPU compatibility, exposure timestamp uncertainty and calibrated plane accuracy must pass their gates before gameplay claims. Full 3D requires an independently verified depth/multi-view profile.
+The runnable code processes declared offline observations; it does not estimate poses from images. Room-scale camera focus, four-person identity stability, GPU compatibility, exposure timestamp uncertainty and calibrated plane accuracy must pass their gates before gameplay claims. Full 3D requires an independently verified depth/multi-view profile.
 
 ## Related repositories, contribution, and license
 

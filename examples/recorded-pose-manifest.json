@@ -1,0 +1,17 @@
+{
+  "format": "motion-tennis-tracking-fixture-v1",
+  "synthetic": true,
+  "profile_id": "webcam-pi3-doubles-v3",
+  "schema_sha256": "b6728e240316e957f5c5addb973f12f9a57fffbcdacc4331f3db5e06895f360b",
+  "profile_sha256": "a3533462fdebfd4c7c2f87eaa3bd579d3056170e3dcfc6a6c68ed34474c1d969",
+  "sender_id": 301,
+  "sender_session_id": "11111111111111111111111111111111",
+  "run_id": "22222222222222222222222222222222",
+  "clock_id": 1,
+  "calibration_id": 1,
+  "image_width": 1920,
+  "image_height": 1080,
+  "coordinate_space": "rectified_normalized_coco17",
+  "preprocessing_id": "synthetic-rectified-v1",
+  "model_id": "synthetic-coco17-v1"
+}
