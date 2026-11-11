@@ -10,7 +10,7 @@ The [S0 contract review and first S1 handoff](docs/s0-contract-review.md) record
 
 | Status | Meaning |
 | --- | --- |
-| **Implemented** | S1 recorded/synthetic pose adapter, one-slot frame handoff, bounded diagnostics, replay CLI and 47 host tests; generated Python codec checks cover the accepted v0.3 boundary |
+| **Implemented** | S1 recorded/synthetic pose adapter, one-slot handoff, bounded trace-v1 exporter, replay CLI and 64 Python tests; generated codec and actual physics/debug consumer checks cover the exercised offline boundary |
 | **Agreed direction** | Webcam-first doubles with one controller/person/avatar per slot; stationary human gestures and automatic avatar locomotion; calibrated 2.5D first, a separately verified true-3D phase later |
 | **Proposed reference** | Native Windows Media Foundation capture, Python RTMO-m 640 × 640 via rtmlib/ONNX Runtime GPU, continuous temporal person tracking and compact pose publication |
 | **Open** | Exact webcam generation, verified GPU/runtime versions, model checksum/notices, calibrated confidence thresholds and actual four-person accuracy/latency |
@@ -84,6 +84,14 @@ python -B -m unittest discover -s tests -v
 
 The first command emits three normalized frames and a summary; the second exercises replacement of waiting frames. Output contains per-person `skeleton_frame`, common `frame_status`, standard Protobuf-JSON envelopes, original timing/provenance and separate loss counters. The CLI opens no camera or network socket. See the [S1 format, checks and handoff](docs/s1-recorded-pose-adapter.md) for conventions and optional generated-codec validation.
 
+Export tracking records in the existing debug trace-v1 format:
+
+```sh
+python -B -m tracking_adapter examples/recorded-poses.jsonl --manifest examples/recorded-pose-manifest.json --format trace-v1
+```
+
+The exporter preserves source sequences, run/session identity, raw timestamps and explicit loss. Tracking-only output contains no controller measurements; the measurement auditor needs their separately collected records. The [consumer compatibility handoff](docs/s1-consumer-compatibility.md) explains the typed physics bridge, restart/loss tests and command for checking actual consumers.
+
 Live capture, RTMO inference, temporal re-identification and packet publishing remain future modules. Pin their actual dependencies, model checksums and device evidence alongside their implementation.
 
 Follow the [integrated startup plan](https://github.com/motion-tennis/documentation/blob/main/docs/development.md) and [assignment contract](https://github.com/motion-tennis/documentation/blob/main/docs/player-assignment.md). The proposed slots are `1=A1`, `2=A2`, `3=B1`, `4=B2`. Identify one controller/person at a time through guided motion at a physical station, require explicit operator confirmation, and complete the versioned Association acknowledgement/resume barrier. Revalidate identity after loss or restart; detection order, proximity and camera side never assign a team. Normal doubles requires all four slots ready; one-to-three-player runs are integration tests without implicit AI fill. End changes and front/back roles preserve each player/controller/avatar/team identity.
@@ -113,10 +121,12 @@ AGENTS.md            Contributor instructions and scope boundaries
 docs/orientation.md  Role, reading order, actual evidence and checks
 docs/workflow.md     Local deliverables mapped to shared stage gates
 docs/s1-recorded-pose-adapter.md  Offline format, evidence and next boundary
+docs/s1-consumer-compatibility.md  Physics/debug handoff, evidence and limits
 tracking_adapter/    Dependency-free validator, latest-frame slot and replay CLI
 examples/            Pinned synthetic manifest, frames and fixture hashes
 tests/               API and file/CLI acceptance tests
 scripts/check_shared_contract.py  Optional generated Python codec checks
+scripts/check_consumer_compatibility.py  Actual C++/debug consumer checks
 requirements-codec.txt  Pinned development-only codec dependencies
 LICENSE              Existing MIT license
 ```

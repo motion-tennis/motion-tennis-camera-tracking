@@ -85,7 +85,7 @@ class ReplayCliTests(unittest.TestCase):
         self.assertEqual(summary["stats"]["received"], 1)
         self.assertEqual(summary["stats"]["rejected"], 1)
         self.assertEqual(summary["stats"]["emitted"], 0)
-        self.assertTrue(any(record.get("code") == "duplicate_person" for record in summary["diagnostics"]))
+        self.assertTrue(any(record["details"].get("code") == "duplicate_person" for record in summary["diagnostics"]))
 
     def test_empty_or_blank_only_run_is_not_successful_evidence(self):
         for raw in (b"", b"\n  \n\t\n"):

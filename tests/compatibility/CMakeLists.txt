@@ -1,0 +1,12 @@
+cmake_minimum_required(VERSION 3.20)
+project(tracking_consumer_compatibility LANGUAGES CXX)
+
+if(NOT PHYSICS_ROOT OR NOT FIXTURE_DIR)
+    message(FATAL_ERROR "PHYSICS_ROOT and FIXTURE_DIR must identify the consumer and generated fixture")
+endif()
+set(MOTION_TENNIS_BUILD_TESTS OFF CACHE BOOL "Consumer fixture builds its focused driver" FORCE)
+add_subdirectory("${PHYSICS_ROOT}" physics)
+add_executable(tracking_consumer_probe physics_pose_driver.cpp)
+target_include_directories(tracking_consumer_probe PRIVATE "${FIXTURE_DIR}" "${PHYSICS_ROOT}/tests")
+target_link_libraries(tracking_consumer_probe PRIVATE motion_tennis_physics_fakes motion_tennis_physics_options)
+target_compile_features(tracking_consumer_probe PRIVATE cxx_std_20)

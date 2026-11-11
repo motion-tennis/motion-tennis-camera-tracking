@@ -2,6 +2,8 @@
 
 [Repository home](../README.md) · [S1 acceptance](s0-contract-review.md#first-bounded-s1-task) · [Central status](https://github.com/motion-tennis/documentation/blob/main/docs/project-status.md)
 
+The initial adapter and 47-test evidence below are retained as the original slice record. The subsequent [consumer compatibility handoff](s1-consumer-compatibility.md) adds a trace-v1 exporter, physics input bridge and current 64-test/consumer evidence. Its source hashes supersede the initial snapshot for the changed files.
+
 ## Task brief
 
 - Task/contributor: implement the first bounded tracking S1 slice; Codex, authorized by the project user on 2026-11-11.
@@ -58,7 +60,7 @@ The emitted `frame_status.frames_dropped_total` combines this session's declared
 - Incremental JSONL reading, at most 65536 bytes per offline record/manifest; metadata labels at most 128 UTF-8 bytes and image dimensions at most 16384 per axis. This JSON cap is an offline file limit, not a UDP packet size.
 - Shared uint32/uint56 bounds are checked before emission. Near wire-counter exhaustion, output is suppressed explicitly.
 
-An emitted result contains per-person `observations`, a common `frame_status`, their complete v0.3 JSON `envelopes`, raw `provenance` and counters. Local diagnostics retain source session/frame IDs, native clock/times and explicit reasons. This bounded diagnostic format still needs review/adoption by the Pi/debug owners; it is not a claim of trace-v1 exporter interoperability.
+An emitted result contains per-person `observations`, a common `frame_status`, their complete v0.3 JSON `envelopes`, raw `provenance` and counters. Local diagnostics retain source session/frame IDs, native clock/times and explicit reasons. The subsequent consumer slice exports these records as trace-v1 and verifies the actual offline debug consumer; its separate handoff retains the remaining live/export and owner-adoption limits.
 
 ## Shared codec check
 

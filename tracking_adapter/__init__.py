@@ -1,4 +1,4 @@
-"""Bounded S1 recorded-pose input, without capture, inference or networking."""
+"""Bounded S1 pose input and producer trace-v1 export, without networking."""
 
 from .adapter import RecordedPoseAdapter, ValidationError, validate_manifest
 

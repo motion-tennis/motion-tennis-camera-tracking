@@ -1,0 +1,284 @@
+{
+  "date": "2026-11-11",
+  "debug": {
+    "cases": [
+      "actual_pose_and_identity_preservation",
+      "clean_trace_with_declared_controller_fixture",
+      "tracking_only_has_no_controller_measurements",
+      "rejection_reason",
+      "overflow_and_loss",
+      "old_session_rejection_and_restart",
+      "mixed_runs_and_untimed_lifecycle"
+    ],
+    "clean_tracking_records": 6,
+    "consumer": "debug-units/scripts/check_trace.py:audit",
+    "limits": "Debug validates trace integrity; these independent checks validate the exercised pose/identity fields. Controller records are explicitly synthetic.",
+    "loss_audit": {
+      "reported_log_drops": 72,
+      "source_sequence_gaps": 72,
+      "valid_trace": false
+    },
+    "lost_records": 72,
+    "status": "passed"
+  },
+  "environment": {
+    "cmake": "cmake version 4.3.0-rc2",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.14.3"
+  },
+  "limitations": "Synthetic controller/setup/map fixtures; no live capture, transport, clock fitting, target-device, geometric fusion or stage acceptance.",
+  "physics": {
+    "actual_source_frames": 5,
+    "canonical_wire_sha256": [
+      "5ffa0a9bd0afd9af6c22724a493bfaba98a464760556fd2975100f324ecf1b27",
+      "d849490ac7b161ffd2674880cb53d61daac7e2fc445258ce54b4ca021078c94f",
+      "e360447e16cc270a9aac15d9ae46cf5f77193e2cdc823d4ab02aac37573cd363",
+      "75cfaaf079acb76f0e3257dbc826c100c100c96e325d859fc25d9d71c43598ad",
+      "6b6e2f9dcab4a46c56c1c374ebac39ec2f96a8366ba0fac0472843ef56ec96da",
+      "2a442589eb66d683f6e69fc0f1b3bd4f3babc2faee60e0ed4c249800c460ef4a",
+      "e05ff01e0cb06ffe61defb1aed808de0a6407deacec83b67fac107e4e794771b",
+      "6e6be34c2568424625a0b0e5388944d9c7bc5614827c16f2e1056062c9795a01",
+      "f2461ce2808ab84e97ef11da68d8aeb54e471fb375bd814ac75d0b12a49b186f",
+      "899c5000a1e7f01f5faf9a8267f345b13d16420d69460392b1c0e2d5c8e1818d",
+      "9daac337945a4a70499dbbba66450752b0c0311a80832d3eb28b265c03833ba3",
+      "47bfa8a53aa4d45eb97e6e60743d0b9759b929882b9e868b4fb90ab2c2850d2b",
+      "f626ffcac01ee0344b8ac33d01fb7a5f46bd3a5755a57bad9187a4321122fad5",
+      "62c81201a74c711502c48a1a62ecc109a0d46b33c7042ffd4a53ca8de560bf90",
+      "625619393e97b494229287ad25a57609be1ecbf6a322497724a838df978c6e35"
+    ],
+    "case_count": 17,
+    "cases": [
+      "actual_four_person_frame_admitted",
+      "actual_joint_state_raw_time_and_uuid_preserved",
+      "actual_bridge_drives_real_core_with_declared_fakes",
+      "missing_pi_map_rejected",
+      "calibration_mismatch_rejected",
+      "uncertainty_inclusive_stale_pose_rejected",
+      "future_processing_and_send_boundaries_rejected",
+      "unavailable_required_wrist_stays_ineligible",
+      "duplicate_frame_rejected",
+      "actual_empty_frame_invalidates_cached_people",
+      "source_loss_and_frame_gap_remain_separate",
+      "status_membership_requires_complete_person_set",
+      "regressing_source_loss_rejected",
+      "restart_clears_old_pose_and_requires_new_binding",
+      "new_session_person_numbers_reusable_after_explicit_setup",
+      "retired_tracker_session_rejected",
+      "pi_epoch_change_fences_cached_pose_and_maps"
+    ],
+    "consumer": "Actual C++ TrackingPoseBridge and BatchCore",
+    "fixture_map": {
+      "measured": false,
+      "pi_anchor_us": 500000,
+      "rate_denominator": 1,
+      "rate_numerator": 1,
+      "source_anchor_us": 1000000,
+      "uncertainty_us": 500
+    },
+    "host_sizeof_bytes": {
+      "batch_core": 68968,
+      "pose_observation": 704,
+      "tracking_pose_bridge": 18144
+    },
+    "limits": "Generated fixture preserves decoded source values. Explicit synthetic bindings/map and scripted contact evaluator; no metric geometry, Pi fitting or C wire decoding.",
+    "status": "passed"
+  },
+  "python_tests": {
+    "exit_code": 0,
+    "status": "passed",
+    "tests": 64
+  },
+  "source_revisions": {
+    "debug-units": {
+      "base_revision": "84c3c2a0289011764980de44575bdb14c7d83376",
+      "working_tree_changes": false
+    },
+    "documentation": {
+      "base_revision": "683cd45352e38ac66738fdee3bd5dba1614a9ab0",
+      "working_tree_changes": true
+    },
+    "motion-tennis-camera-tracking": {
+      "base_revision": "0509fbd8cc15dd7b5a1a640814b66e890aef1ca3",
+      "working_tree_changes": true
+    },
+    "motion-tennis-physics-engine": {
+      "base_revision": "51f153593d83bf4872302f7ab286ce458389cd5f",
+      "working_tree_changes": true
+    }
+  },
+  "source_sha256_lf": {
+    "debug-units/examples/synthetic-trace.jsonl": "df6aa6a13633218309f4630c63149a73720fc2c6d79bdd55ed58ca4f525c2b4d",
+    "debug-units/scripts/audit_extensions.py": "2563993dabc750d8fac7c9a88efee381c72c403652b713018539034f20d5d498",
+    "debug-units/scripts/check_trace.py": "cbe87092496422633a7a5f011a03fe59f43f720b5bf32e2eda1e82fa4db643b2",
+    "documentation/scripts/contract/wire_bounds.py": "82799d4a6c48ed87d02154e6fc5ed4c476454c3416e43942660d41f76ac4a434",
+    "documentation/spec/motion.proto": "b6728e240316e957f5c5addb973f12f9a57fffbcdacc4331f3db5e06895f360b",
+    "documentation/spec/reference-profile.json": "a3533462fdebfd4c7c2f87eaa3bd579d3056170e3dcfc6a6c68ed34474c1d969",
+    "motion-tennis-camera-tracking/examples/fixture-hashes.json": "ce457a9149954124d86b619bb8d0164be55eab65d9a66bd00b3c206fdea653dc",
+    "motion-tennis-camera-tracking/examples/recorded-pose-manifest.json": "b3501f06c626840938948ea4fcb402930cd037354532235bab0e76780119c806",
+    "motion-tennis-camera-tracking/examples/recorded-poses.jsonl": "375432756521286d21b93865c17f59b6adfb7571d59d1224944d9bc817ac25aa",
+    "motion-tennis-camera-tracking/requirements-codec.txt": "d75cf2e1f33db8981401f4249d25c271fb824104227ecf017056151321cf26ff",
+    "motion-tennis-camera-tracking/scripts/check_consumer_compatibility.py": "89c16ff2808763ec698417889f17e14b744f9d106b46f818fc87d9ca5abfea4e",
+    "motion-tennis-camera-tracking/scripts/check_shared_contract.py": "9235b13a3b6c06d84a00d35e0c951ebd6ca9bd24debe2ad5979ef5662cebbaa3",
+    "motion-tennis-camera-tracking/tests/compatibility/CMakeLists.txt": "d301ea8c2d7105e926afb14b84c91e1ef645af2288619aac4c648561f6edac26",
+    "motion-tennis-camera-tracking/tests/compatibility/physics_pose_driver.cpp": "63e804e1381fcade8d7f06568881e0c995ac11b05218560042618c623d517c57",
+    "motion-tennis-camera-tracking/tests/fixtures.py": "a39ec71a5fc341ca5cc8d98d68c5440b5958032d2e65c361a08bdcdf6514cca6",
+    "motion-tennis-camera-tracking/tests/test_consumer_compatibility.py": "96851507bd9191046d40523f1edc0b6e4ec76cb50d5181779319a7ed33d9f77b",
+    "motion-tennis-camera-tracking/tests/test_recorded_pose_adapter.py": "ad65d2e66dc45a95b1c29fbe4ddd946dfc193a2af9561ff268c85518532a3dc0",
+    "motion-tennis-camera-tracking/tests/test_replay_cli.py": "aa5497535b67b2bfff19bd283d8b527e9f513f2e46c805f52062c1c0447b6c7f",
+    "motion-tennis-camera-tracking/tests/test_trace_exporter.py": "eee0a890246bd092c4526ab5b0fe55f3b5069d2b1151d1dae27765e2e1fc2d5f",
+    "motion-tennis-camera-tracking/tracking_adapter/__init__.py": "32c0337e125342f926ebc3262541987b2a8e8f46679ff8f310ce09d0b8df9ad8",
+    "motion-tennis-camera-tracking/tracking_adapter/__main__.py": "5e9da517a95aa46905d302bc0f4ba1372710f91ee68ff3025ac34cdd75cbea6e",
+    "motion-tennis-camera-tracking/tracking_adapter/adapter.py": "c6e1ddd2519b4f449ca7b1ef211a7b3c135b3762519bea08ecbb54864c7e8344",
+    "motion-tennis-camera-tracking/tracking_adapter/trace.py": "1e500226e4596581df72efccf69332c6ee1a78820935c48ea193edcf2b1a8b28",
+    "motion-tennis-physics-engine/CMakeLists.txt": "ecc318ac0c0139a1e3f2296ca2646bc7ab5a2373b5aa3b65ab2ec3845e7eb4b4",
+    "motion-tennis-physics-engine/include/motion_tennis/physics/adapters.hpp": "51e8c82191b5878b91a31bcb26d66c5832b1aadef3914cba98bc48217e1bcc88",
+    "motion-tennis-physics-engine/include/motion_tennis/physics/batch_core.hpp": "8b6b47f6b3d6f9c8455960326c7b1acf101375f6f6b29ab1c71a84d303aa1faa",
+    "motion-tennis-physics-engine/include/motion_tennis/physics/bounded_vector.hpp": "df5f4c311f615ee0d12c0196a118dbec2ace4dab196cdb8e1398464267a77e1f",
+    "motion-tennis-physics-engine/include/motion_tennis/physics/contract.hpp": "e1db3b86e27cb5f3058bca420d9f34718abb1dfd9b4f5fdbcf93d9074e5e32f2",
+    "motion-tennis-physics-engine/include/motion_tennis/physics/fakes.hpp": "760c270b24026baf1502167f5c8cfb362981711501a054d1cb097a905d79a6eb",
+    "motion-tennis-physics-engine/include/motion_tennis/physics/input_scheduler.hpp": "328d4e4398ab3acb6605a9300873a7842374f99db54bdb726003c99181eecd5e",
+    "motion-tennis-physics-engine/include/motion_tennis/physics/simulation.hpp": "0f3442114a9595e8983ab623cc452b0a27af37b5dd1cd65500715db8272ca61a",
+    "motion-tennis-physics-engine/include/motion_tennis/physics/tracking_pose_bridge.hpp": "be1715c699f760d3c9cd7c102349f64dabf826f593092d163cd99e62c39c52d8",
+    "motion-tennis-physics-engine/src/batch_core.cpp": "a3a446d6e633eb38aeff6f99c461f55e834c04f42a167d6ed1f3ae50893b0144",
+    "motion-tennis-physics-engine/src/fakes.cpp": "3fc1c63304c1e916d5ae99b3a157e2211c1c33f71f9531b911e5a51579384e8c",
+    "motion-tennis-physics-engine/src/input_scheduler.cpp": "e21bc9f2a4e3b29df905614ff8c84054cc7eb3673c5af41abedef221fd97eecd",
+    "motion-tennis-physics-engine/src/simulation.cpp": "d82350088f0b65b34638058cc32ab1b355c12a3af3af63cf5025851e23a8522e",
+    "motion-tennis-physics-engine/src/tracking_pose_bridge.cpp": "f16ba36130983915e0f2a70f431fbf3ce9796efdc5aa545031485ff4fe324b7c",
+    "motion-tennis-physics-engine/tests/fixtures.hpp": "11282f4ed6878b1eca6ee4538d13521b2362b6af7f3c9b04f78dfafbc89447bb",
+    "motion-tennis-physics-engine/tests/s1_batch_core_tests.cpp": "e15eb3bdfa3d4e5fd9edd5999286ec16f4b19b2b143d7e10516eb4828fbd3936",
+    "motion-tennis-physics-engine/tests/tracking_bridge_tests.cpp": "7285f6673f51348c3bb2db2e16bf508fc5eabe57b9224fea999616c604c46d46"
+  },
+  "stage": "S1",
+  "status": "passed_offline_consumer_compatibility",
+  "wire": {
+    "cases": [
+      {
+        "case": "example_line_1",
+        "envelopes": [
+          {
+            "body": "skeleton_frame",
+            "encoded_bytes": 443
+          },
+          {
+            "body": "skeleton_frame",
+            "encoded_bytes": 443
+          },
+          {
+            "body": "skeleton_frame",
+            "encoded_bytes": 443
+          },
+          {
+            "body": "skeleton_frame",
+            "encoded_bytes": 443
+          },
+          {
+            "body": "frame_status",
+            "encoded_bytes": 62
+          }
+        ]
+      },
+      {
+        "case": "example_line_2",
+        "envelopes": [
+          {
+            "body": "skeleton_frame",
+            "encoded_bytes": 443
+          },
+          {
+            "body": "frame_status",
+            "encoded_bytes": 59
+          }
+        ]
+      },
+      {
+        "case": "example_line_3",
+        "envelopes": [
+          {
+            "body": "frame_status",
+            "encoded_bytes": 58
+          }
+        ]
+      },
+      {
+        "case": "maximum_adapter_values",
+        "envelopes": [
+          {
+            "body": "skeleton_frame",
+            "encoded_bytes": 490
+          },
+          {
+            "body": "skeleton_frame",
+            "encoded_bytes": 490
+          },
+          {
+            "body": "skeleton_frame",
+            "encoded_bytes": 490
+          },
+          {
+            "body": "skeleton_frame",
+            "encoded_bytes": 490
+          },
+          {
+            "body": "frame_status",
+            "encoded_bytes": 106
+          }
+        ]
+      },
+      {
+        "case": "maximum_message_sequence_width",
+        "envelopes": [
+          {
+            "body": "skeleton_frame",
+            "encoded_bytes": 497
+          },
+          {
+            "body": "skeleton_frame",
+            "encoded_bytes": 497
+          },
+          {
+            "body": "skeleton_frame",
+            "encoded_bytes": 497
+          },
+          {
+            "body": "skeleton_frame",
+            "encoded_bytes": 497
+          },
+          {
+            "body": "frame_status",
+            "encoded_bytes": 113
+          }
+        ]
+      },
+      {
+        "case": "shared_seventeen_joint_pose",
+        "envelopes": [
+          {
+            "body": "skeleton_frame",
+            "encoded_bytes": 439
+          },
+          {
+            "body": "frame_status",
+            "encoded_bytes": 58
+          }
+        ]
+      }
+    ],
+    "checked_envelopes": 20,
+    "development_dependencies": {
+      "grpcio": "1.85.0",
+      "grpcio-tools": "1.78.0",
+      "protobuf": "6.33.5",
+      "setuptools": "84.2.1",
+      "typing_extensions": "4.16.0"
+    },
+    "example_frames": 3,
+    "largest_encoded_envelope_bytes": 497,
+    "limitations": "Python host codec only; no nanopb C/device interoperability, network, capture or hardware validation.",
+    "profile_sha256": "a3533462fdebfd4c7c2f87eaa3bd579d3056170e3dcfc6a6c68ed34474c1d969",
+    "schema_sha256": "b6728e240316e957f5c5addb973f12f9a57fffbcdacc4331f3db5e06895f360b",
+    "scope": "S1 offline generated Python codec compatibility",
+    "shared_pose_body_sha256": "68c6e98b41dcf94f8064c22cb09a7108635b470ad4d52c5beba738bf619faa1d",
+    "status": "passed",
+    "udp_cap_bytes_including_envelope": 1200
+  }
+}

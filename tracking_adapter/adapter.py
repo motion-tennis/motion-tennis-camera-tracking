@@ -5,11 +5,12 @@ This module neither estimates Pi maps nor assigns controllers to people.
 """
 
 import base64
-from collections import deque
 from copy import deepcopy
 import math
 import re
 from threading import Lock
+
+from .trace import DEFAULT_TRACE_LIMITS, TraceBuffer
 
 
 PROFILE_ID = "webcam-pi3-doubles-v3"
@@ -76,10 +77,12 @@ def _label(value, name):
 
 def validate_manifest(manifest):
     """Return an isolated, validated copy of the offline session declaration."""
-    _fields(manifest, ("format", "synthetic", "profile_id", "schema_sha256", "profile_sha256",
-                       "sender_id", "sender_session_id", "run_id", "clock_id", "calibration_id",
-                       "image_width", "image_height", "coordinate_space", "preprocessing_id", "model_id"),
-            "manifest")
+    required = ("format", "synthetic", "profile_id", "schema_sha256", "profile_sha256",
+                "sender_id", "sender_session_id", "run_id", "clock_id", "calibration_id",
+                "image_width", "image_height", "coordinate_space", "preprocessing_id", "model_id")
+    if type(manifest) is dict and "trace_limits" in manifest:
+        required += ("trace_limits",)
+    _fields(manifest, required, "manifest")
     _require(manifest["format"] == "motion-tennis-tracking-fixture-v1", "unsupported_format", "Unsupported fixture format")
     _require(type(manifest["synthetic"]) is bool, "invalid_structure", "synthetic must be an explicit Boolean")
     _require((manifest["profile_id"], manifest["schema_sha256"], manifest["profile_sha256"])
@@ -94,6 +97,11 @@ def validate_manifest(manifest):
              "Coordinates must already refer to the original rectified image")
     for name in ("preprocessing_id", "model_id"):
         _label(manifest[name], name)
+    if "trace_limits" in manifest:
+        limits = manifest["trace_limits"]
+        _fields(limits, tuple(DEFAULT_TRACE_LIMITS), "trace_limits")
+        values = [_counter(limits[name], name, minimum=1) for name in DEFAULT_TRACE_LIMITS]
+        _require(values == sorted(values), "invalid_trace_limits", "Response target <= electrical target <= expiry is required")
     return deepcopy(manifest)
 
 
@@ -193,10 +201,10 @@ class RecordedPoseAdapter:
         self._last_now_us = None
         self._seen_sessions = {self._manifest["sender_session_id"]}
         self._last_rejection = None
-        self._diagnostics = deque()
         self._stats = dict.fromkeys(("received", "accepted", "rejected", "replaced", "emitted", "expired", "suppressed",
                                     "session_flushes", "session_restarts", "frame_sequence_gaps",
-                                    "source_frames_dropped_total", "diagnostics_dropped"), 0)
+                                    "source_frames_dropped_total", "diagnostics_dropped", "untimed_metadata_dropped"), 0)
+        self._trace = TraceBuffer(self._manifest, self._stats, DIAGNOSTIC_CAPACITY)
 
     @property
     def stats(self):
@@ -208,35 +216,65 @@ class RecordedPoseAdapter:
         with self._lock:
             return deepcopy(self._last_rejection)
 
-    def _diagnostic(self, event, now_us=None, frame=None, code=None):
-        if len(self._diagnostics) == DIAGNOSTIC_CAPACITY:
-            self._diagnostics.popleft()
-            self._stats["diagnostics_dropped"] += 1
-        record = {"event": event, "sender_id": self._manifest["sender_id"],
-                  "sender_session_id": self._manifest["sender_session_id"],
-                  "clock_id": self._manifest["clock_id"], "time_us": None if now_us is None else str(now_us)}
+    def _diagnostic(self, event, now_us=None, frame=None, code=None, extra=None):
+        details = {"event_boundary": "caller_observation", "synthetic": self._manifest["synthetic"],
+                   "model_id": self._manifest["model_id"], "preprocessing_id": self._manifest["preprocessing_id"],
+                   "coordinate_space": self._manifest["coordinate_space"],
+                   "calibration_id": str(self._manifest["calibration_id"]),
+                   "capture_uncertainty_us": None,
+                   "capture_uncertainty_reason": "The caller observation timestamp has no characterized error bound.",
+                   "clock_mapping_status": "unavailable"}
         if frame is not None:
-            record.update(frame_id=frame["frame_id"], capture=deepcopy(frame["capture"]),
-                          arrival_us=frame["arrival_us"], processing_complete_us=frame["processing_complete_us"])
+            details.update(frame_id=frame["frame_id"], capture=deepcopy(frame["capture"]),
+                           arrival_us=frame["arrival_us"], processing_complete_us=frame["processing_complete_us"],
+                           person_ids=[str(person["person_id"]) for person in frame["people"]],
+                           source_frames_dropped_total=frame["frames_dropped_total"])
         if code:
-            record["code"] = code
-        self._diagnostics.append(record)
+            details["code"] = code
+        if extra:
+            details.update(deepcopy(extra))
+        return self._trace.record(self._manifest, event, now_us, details)
 
     def _reject(self, error, now_us=None, raw_frame=None):
         self._stats["rejected"] += 1
         self._last_rejection = {"code": error.code, "message": str(error)}
-        self._diagnostic("frame_rejected", now_us, code=error.code)
-        record = self._diagnostics[-1]
+        details = {}
         if type(raw_frame) is dict:
             for name in ("frame_id", "arrival_us", "processing_complete_us"):
                 try:
                     _counter(raw_frame.get(name), name)
                 except ValidationError:
                     continue
-                record[name] = raw_frame[name]
+                details[name] = raw_frame[name]
             session = raw_frame.get("sender_session_id")
             if type(session) is str and re.fullmatch(r"[0-9a-f]{32}", session):
-                record["input_sender_session_id"] = session
+                details["input_sender_session_id"] = session
+            capture = raw_frame.get("capture")
+            if type(capture) is dict:
+                retained = {}
+                for name in ("value_us",):
+                    try:
+                        _counter(capture.get(name), name)
+                    except ValidationError:
+                        continue
+                    retained[name] = capture[name]
+                for name in ("clock_id", "uncertainty_us"):
+                    value = capture.get(name)
+                    if type(value) is int and 0 <= value < 1 << 32:
+                        retained[name] = value
+                kind = capture.get("kind")
+                if type(kind) is str and len(kind) <= 14 and kind.isascii():
+                    retained["kind"] = kind
+                if type(capture.get("timing_valid")) is bool:
+                    retained["timing_valid"] = capture["timing_valid"]
+                if retained:
+                    details["input_capture"] = retained
+            people = raw_frame.get("people")
+            if type(people) is list and len(people) <= 4:
+                details["input_person_ids"] = [str(person["person_id"]) for person in people
+                                               if type(person) is dict and type(person.get("person_id")) is int
+                                               and 0 < person["person_id"] < 1 << 32]
+        self._diagnostic("frame_rejected", now_us, code=error.code, extra=details)
 
     def _observe_now(self, now_us):
         now_us = _now(now_us)
@@ -313,7 +351,10 @@ class RecordedPoseAdapter:
             envelopes = [self._envelope("skeleton_frame", body, now_us) for body in observations]
             envelopes.append(self._envelope("frame_status", status, now_us))
             self._stats["emitted"] += 1
-            self._diagnostic("frame_emitted", now_us, frame)
+            self._diagnostic("frame_emitted", now_us, frame, extra={
+                "emitted_us": str(now_us), "observations": observations, "frame_status": status,
+                "message_sequences": [envelope["message_seq"] for envelope in envelopes],
+            })
             provenance = {name: self._manifest[name] for name in ("synthetic", "profile_id", "schema_sha256", "profile_sha256",
                           "sender_id", "sender_session_id", "run_id", "clock_id", "coordinate_space", "preprocessing_id", "model_id")}
             provenance.update(frame_id=frame["frame_id"], capture=deepcopy(frame["capture"]),
@@ -331,23 +372,44 @@ class RecordedPoseAdapter:
                 "clock_id": self._manifest["clock_id"], body: deepcopy(payload)}
 
     def drain_diagnostics(self):
+        """Drain original timed trace-v1 events; export_trace also retains metadata."""
         with self._lock:
-            records = list(self._diagnostics)
-            self._diagnostics.clear()
-            return records
+            return self._trace.drain_events()
 
-    def start_session(self, manifest):
-        """Explicitly invalidate waiting observations before accepting new identities."""
+    def export_trace(self):
+        """Drain bounded records into run-grouped headers/events/untimed metadata."""
+        with self._lock:
+            return self._trace.export()
+
+    def start_session(self, manifest, now_us=None, previous_session_now_us=None):
+        """Fence sessions using separately declared old/new native boundaries.
+
+        Numeric clock IDs do not establish clock continuity across sessions.
+        Omitted boundaries stay explicitly untimed rather than borrowing a
+        capture, completion or other session's observation timestamp.
+        """
         manifest = validate_manifest(manifest)
         with self._lock:
             _require(manifest["sender_session_id"] not in self._seen_sessions,
                      "session_reuse", "A restart must not reuse any session already seen by this adapter")
             _require(len(self._seen_sessions) < SESSION_HISTORY_CAPACITY, "session_limit",
                      "Create a new adapter/run after the bounded session history is full")
+            try:
+                self._trace.check_registration(manifest)
+            except ValueError as error:
+                raise ValidationError("run_manifest_conflict", str(error)) from error
+            if now_us is not None:
+                now_us = _now(now_us)
+            if previous_session_now_us is not None:
+                previous_session_now_us = _now(previous_session_now_us)
+                _require(self._last_now_us is None or previous_session_now_us >= self._last_now_us,
+                         "clock_regression", "Session transition time moved backwards in the retained native clock")
             if self._pending is not None:
                 self._stats["session_flushes"] += 1
-                self._diagnostic("session_frame_flushed", frame=self._pending)
+                self._diagnostic("session_frame_flushed", previous_session_now_us,
+                                 frame=self._pending, extra={"event_boundary": "session_flush_observed"})
             self._manifest = manifest
+            self._trace.register(manifest)
             self._seen_sessions.add(manifest["sender_session_id"])
             self._pending = None
             self._last_frame_id = 0
@@ -355,7 +417,7 @@ class RecordedPoseAdapter:
             self._last_source_drop = 0
             self._sequence = 0
             self._session_drops = 0
-            self._last_now_us = None
+            self._last_now_us = now_us
             self._last_rejection = None
             self._stats["session_restarts"] += 1
-            self._diagnostic("session_started")
+            self._diagnostic("session_started", now_us, extra={"event_boundary": "session_start_observed"})

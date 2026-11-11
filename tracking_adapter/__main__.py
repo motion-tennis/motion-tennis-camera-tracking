@@ -56,8 +56,9 @@ def read_frames(path):
                 raise ValidationError(error.code, "Line " + str(line_number) + ": " + str(error)) from error
 
 
-def _emit(value):
-    print(json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False))
+def _emit(value, stream=None):
+    print(json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False),
+          file=sys.stdout if stream is None else stream)
 
 
 def main(argv=None):
@@ -66,6 +67,8 @@ def main(argv=None):
     parser.add_argument("--manifest", required=True, help="Pinned offline session manifest")
     parser.add_argument("--consume-every", type=int, default=1,
                         help="Consume after this many input records (1..1024); larger values exercise replacement")
+    parser.add_argument("--format", choices=("observations", "trace-v1"), default="observations",
+                        help="Emit observation results or a tracking-only trace-v1 JSONL export")
     args = parser.parse_args(argv)
     if not 1 <= args.consume_every <= 1024:
         parser.error("--consume-every must be between 1 and 1024")
@@ -82,15 +85,30 @@ def main(argv=None):
             adapter.offer(frame, now_us=now_us)
             if received % args.consume_every == 0:
                 result = adapter.take(now_us=now_us)
-                if result is not None:
+                if result is not None and args.format == "observations":
                     _emit({"type": "frame", "result": result})
         result = adapter.take(now_us=now_us)
-        if result is not None:
+        if result is not None and args.format == "observations":
             _emit({"type": "frame", "result": result})
         stats = adapter.stats
         valid = bool(received) and not (stats["rejected"] or stats["expired"] or stats["suppressed"])
-        _emit({"type": "summary", "valid": valid, "stats": stats, "diagnostics": adapter.drain_diagnostics(),
-               "limits": "Offline declared input only; no sensor, inference, Pi mapping, transport or hardware validation."})
+        bundles = adapter.export_trace()
+        if args.format == "trace-v1":
+            for bundle in bundles:
+                header = bundle["header"]
+                header["tracking_untimed_metadata"] = bundle["untimed_metadata"]
+                _emit(header)
+                for event in bundle["events"]:
+                    _emit(event)
+            valid = valid and all(bundle["header"]["tracking_trace"]["complete_source_diagnostics"]
+                                  for bundle in bundles)
+            _emit({"type": "trace_summary", "valid": valid, "stats": stats,
+                   "limits": "Tracking-only export; controller measurements and Pi mapping remain absent."}, sys.stderr)
+        else:
+            _emit({"type": "summary", "valid": valid, "stats": stats,
+                   "diagnostics": [event for bundle in bundles for event in bundle["events"]],
+                   "untimed_metadata": [record for bundle in bundles for record in bundle["untimed_metadata"]],
+                   "limits": "Offline declared input only; no sensor, inference, Pi mapping, transport or hardware validation."})
         return 0 if valid else 1
     except (ValidationError, OSError) as error:
         print(json.dumps({"error": getattr(error, "code", "input_error"), "message": str(error)}), file=sys.stderr)
